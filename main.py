@@ -6,7 +6,6 @@ import THSR
 import bus
 import user_inf
 import thsr_usr
-import keep_alive
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 from requests import request
 from user_agent import generate_user_agent
@@ -305,7 +304,7 @@ def main():
     updater.dispatcher.add_handler(MessageHandler(Filters.text, act)) 
     updater.dispatcher.add_handler(MessageHandler(Filters.location,stk))
     #updater.dispatcher.add_handler(MessageHandler(Filters.sticker,stk))
-    keep_alive.keep_alive()
+    
     #用polling取得新訊息
     updater.start_polling()
     updater.idle()
