@@ -1,7 +1,6 @@
 import json
 import auth
 import datetime
-import time
 import user_inf
 
 class TrainInf:
@@ -37,7 +36,7 @@ def toTelegram(id,message):
         user_inf.setLatest(id,s[0]+" "+s[3]+" "+s[2])
         user_inf.setRecord(id,s[2]+" "+s[3])
         
-        date=datetime.date(datetime.date.today().year,int(s[0][0:2]),int(s[0][2:4]))
+        date=datetime.date(datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=+8))).date().year,int(s[0][0:2]),int(s[0][2:4]))
         time=datetime.time(int(s[1]),0,0,0)
         time=datetime.datetime.combine(date,time)
 
@@ -53,7 +52,7 @@ def toTelegram(id,message):
         user_inf.setRecord(id,s[1]+" "+s[2])
 
         if s[0].__len__()==4:
-            date=datetime.date(datetime.date.today().year,int(s[0][0:2]),int(s[0][2:4]))
+            date=datetime.date(datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=+8))).date().year,int(s[0][0:2]),int(s[0][2:4]))
             time=datetime.time(4,0,0,0)
             time=datetime.datetime.combine(date,time)
 
@@ -66,7 +65,7 @@ def toTelegram(id,message):
 
         elif s[0].__len__()<=2:
             time=datetime.time(int(s[0]),0,0,0)
-            time=datetime.datetime.combine(datetime.date.today(),time)
+            time=datetime.datetime.combine(datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=+8))).date(),time)
             
             timeStr=(OtoD(s[1],s[2],timeFlag=time))
             if timeStr!="":
@@ -81,7 +80,7 @@ def toTelegram(id,message):
 def Train_later(id):
     s=(user_inf.getLasttime(id)+" "+user_inf.getRecord(id)).split(' ')
         
-    date=datetime.date(datetime.date.today().year,int(s[0][0:2]),int(s[0][2:4]))
+    date=datetime.date(datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=+8))).date().year,int(s[0][0:2]),int(s[0][2:4]))
     time=datetime.time(int(s[1][0:2]),int(s[1][3:5]),0,0)
     time=datetime.datetime.combine(date,time)
 
@@ -102,7 +101,7 @@ def TimeInf():
     with open("Today.json",encoding="utf-8") as jsonfile:
         data = json.load(jsonfile)
 
-def OtoD(station1,station2,date=str(datetime.date.today()),timeFlag=datetime.datetime.fromtimestamp(time.time())):
+def OtoD(station1,station2,date=str(datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=+8))).date()),timeFlag=datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=+8)))):
     
     with open("TRAID.json",encoding="utf-8") as jsonfile:
         data = json.load(jsonfile)
@@ -117,7 +116,7 @@ def OtoD(station1,station2,date=str(datetime.date.today()),timeFlag=datetime.dat
 
     Train=[]
     s=str("")
-
+    timeFlag=datetime.datetime.combine(timeFlag.date(),timeFlag.time())
     for t in res.json():
         if Train.__len__()>=5:
             break
@@ -142,6 +141,6 @@ if __name__ == '__main__':
     #print(OtoD("台北","松山"))
     user_inf.readData(730270828)
     
-    print(toTelegram(730270828,"0416 10 善化 台中"))
+    print(toTelegram(730270828,"善化 台中"))
     print(user_inf.getLasttime(730270828))
     user_inf.saveAll()

@@ -1,7 +1,6 @@
 import json
 import auth
 import datetime
-import time
 import thsr_usr
 import ticket
 
@@ -41,7 +40,7 @@ def toTelegram(id,message):
         thsr_usr.setLatest(id,s[3]+" "+s[2])
         thsr_usr.setRecord(id,s[2]+" "+s[3])
 
-        date=datetime.date(datetime.date.today().year,int(s[0][0:2]),int(s[0][2:4]))
+        date=datetime.date(datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=+8))).date().year,int(s[0][0:2]),int(s[0][2:4]))
         time=datetime.time(int(s[1]),0,0,0)
         time=datetime.datetime.combine(date,time)
 
@@ -57,7 +56,7 @@ def toTelegram(id,message):
             thsr_usr.setLatest(id,s[2]+" "+s[1])
             thsr_usr.setRecord(id,s[1]+" "+s[2])
 
-            date=datetime.date(datetime.date.today().year,int(s[0][0:2]),int(s[0][2:4]))
+            date=datetime.date(datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=+8))).date().year,int(s[0][0:2]),int(s[0][2:4]))
             time=datetime.time(4,0,0,0)
             time=datetime.datetime.combine(date,time)
 
@@ -72,7 +71,7 @@ def toTelegram(id,message):
             thsr_usr.setLatest(id,s[2]+" "+s[1])
             thsr_usr.setRecord(id,s[1]+" "+s[2])
             time=datetime.time(int(s[0]),0,0,0)
-            time=datetime.datetime.combine(datetime.date.today(),time)
+            time=datetime.datetime.combine(datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=+8))).date(),time)
             
             timeStr=(OtoD(s[1],s[2],timeFlag=time))
             if timeStr!="":
@@ -86,7 +85,7 @@ def toTelegram(id,message):
 def Train_later(id):
     s=(thsr_usr.getLasttime(id)+" "+thsr_usr.getRecord(id)).split(' ')
         
-    date=datetime.date(datetime.date.today().year,int(s[0][0:2]),int(s[0][2:4]))
+    date=datetime.date(datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=+8))).date().year,int(s[0][0:2]),int(s[0][2:4]))
     time=datetime.time(int(s[1][0:2]),int(s[1][3:5]),0,0)
     time=datetime.datetime.combine(date,time)
 
@@ -106,10 +105,10 @@ def stationInf(name,data):
 
 
 
-def OtoD(station1,station2,date=str(datetime.date.today()),timeFlag=datetime.datetime.fromtimestamp(time.time())):
-
-    if date==str(datetime.date.today()) and timeFlag<=datetime.datetime.fromtimestamp(time.time()):
-        timeFlag=datetime.datetime.fromtimestamp(time.time())
+def OtoD(station1,station2,date=str(datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=+8))).date()),timeFlag=datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=+8)))):
+    datetime.timezone(datetime.timedelta(hours=+8))
+    if date==str(datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=+8))).date()) and timeFlag<=datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=+8))):
+        timeFlag=datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=+8)))
     global lst
     lst=auth.crawl("https://ptx.transportdata.tw/MOTC/v2/Rail/THSR/AvailableSeatStatus/Train/Leg/TrainDate/"+date+"?$format=JSON").json()["AvailableSeats"]
     with open("THSRID.json",encoding="utf-8") as jsonfile:
@@ -124,7 +123,7 @@ def OtoD(station1,station2,date=str(datetime.date.today()),timeFlag=datetime.dat
 
     Train=[]
     s=str("")
-
+    timeFlag=datetime.datetime.combine(timeFlag.date(),timeFlag.time())
     for t in res.json():
         if Train.__len__()>=8:
             break
@@ -150,7 +149,7 @@ def OtoD(station1,station2,date=str(datetime.date.today()),timeFlag=datetime.dat
     
 if __name__ == '__main__':
     #print(OtoD("台南","台北"))
-    thsr_usr.readData(730270828)
-    #print(OtoD("台北","高雄"))
-    print(toTelegram(730270828,"0502 17 高雄 台北"))
-    thsr_usr.saveAll()
+    # thsr_usr.readData(730270828)
+    print(OtoD("台北","高雄"))
+    # print(toTelegram(730270828,"0502 17 高雄 台北"))
+    # thsr_usr.saveAll()
