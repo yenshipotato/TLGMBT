@@ -9,7 +9,7 @@ import thsr_usr
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 from requests import request
 from user_agent import generate_user_agent
-from telegram import Update
+from telegram import Update 
 
 
 P_mode=telegram.ParseMode.HTML
