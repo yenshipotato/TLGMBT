@@ -6,6 +6,7 @@ import THSR
 import bus
 import user_inf
 import thsr_usr
+import keep_alive
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 from requests import request
 from user_agent import generate_user_agent
@@ -218,23 +219,23 @@ def act(update: Update, _: CallbackContext):
 
         elif user_inf.getStatus(update.message.from_user.id)==5:#bus MODE---------------------------------------------------
             if update.message.text == "臺北市":
-                update.message.reply_text("請輸入路線",reply_markup = remove)
+                update.message.reply_text("請輸入路線",reply_markup = Cancel_markup)
 
                 user_inf.setStatus(update.message.from_user.id,51)
             elif update.message.text == "新北市":
-                update.message.reply_text("請輸入路線",reply_markup = remove)
+                update.message.reply_text("請輸入路線",reply_markup = Cancel_markup)
 
                 user_inf.setStatus(update.message.from_user.id,52)  
             elif update.message.text == "桃園市":
-                update.message.reply_text("請輸入路線",reply_markup = remove)
+                update.message.reply_text("請輸入路線",reply_markup = Cancel_markup)
 
                 user_inf.setStatus(update.message.from_user.id,53)  
             elif update.message.text == "臺中市":
-                update.message.reply_text("請輸入路線",reply_markup = remove)
+                update.message.reply_text("請輸入路線",reply_markup = Cancel_markup)
 
                 user_inf.setStatus(update.message.from_user.id,54)  
             elif update.message.text == "臺南市":
-                update.message.reply_text("請輸入路線",reply_markup = remove)
+                update.message.reply_text("請輸入路線",reply_markup = Cancel_markup)
 
                 user_inf.setStatus(update.message.from_user.id,55)  
             elif update.message.text == "退出Bus":
@@ -243,6 +244,21 @@ def act(update: Update, _: CallbackContext):
                 user_inf.setStatus(update.message.from_user.id,0)  
             else:
                 update.message.reply_text("請以按鈕選擇地區")   
+
+        elif user_inf.getStatus(update.message.from_user.id)//10==5:#bus zone MODE---------------------------------------------------
+
+            if update.message.text == "取消目前動作":
+                update.message.reply_text("已取消",reply_markup = Bus_markup)        
+
+                user_inf.setStatus(update.message.from_user.id,5)  
+
+            else :
+                text=bus.toTelegram(BusZONE[user_inf.getStatus(update.message.from_user.id)%10],update.message.text)
+                if type(text)==type("0"):
+                    update.message.reply_text(text)
+                else:
+                    update.message.reply_text(text[0])
+                    update.message.reply_text(text[1])
 
 
     #print(update.message)
@@ -279,18 +295,17 @@ def start(update: Update, _: CallbackContext):
 def main():
 
     #load token
-    with open("config.json","r") as f:
-        config = json.load(f)
-
+    
+    my_secret = os.environ['token']
     #create bot
-    updater = Updater(token=config["token"])
+    updater = Updater(token=my_secret)
     
     #針對不同類別訊息執行指定函式
     updater.dispatcher.add_handler(CommandHandler("start",start)) 
     updater.dispatcher.add_handler(MessageHandler(Filters.text, act)) 
     updater.dispatcher.add_handler(MessageHandler(Filters.location,stk))
     #updater.dispatcher.add_handler(MessageHandler(Filters.sticker,stk))
-    
+    keep_alive.keep_alive()
     #用polling取得新訊息
     updater.start_polling()
     updater.idle()

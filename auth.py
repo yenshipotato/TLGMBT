@@ -1,5 +1,6 @@
 from hashlib import sha1
 import hmac
+import os
 from wsgiref.handlers import format_date_time
 from datetime import datetime
 from time import mktime
@@ -8,8 +9,8 @@ from requests import request
 from pprint import pprint
 from user_agent import generate_user_agent
 
-app_id = '1b5de0ab1bb24acd8f0d5fa416e64125'
-app_key = '-yJtQSEZp1JPO-A8LZAGGsDrqPE'
+app_id = os.environ['app_id']
+app_key = os.environ['app_key']
 
 class Auth():
 
