@@ -3,21 +3,18 @@ import auth
 import datetime
 import time
 import user_inf
+import TrainAttribute
 
 class TrainInf:
     def __init__(self,TrainNum,TrainTypeName,TrainDate,TimeO,TimeD):
-
-        self.TrainNum=TrainNum
+        self.Attrib=TrainAttribute.Attribute(TrainNum,TrainDate,TimeO,TimeD)
         self.TrainTypeName=TrainTypeName
-        self.TrainDate=TrainDate
-        self.TourTime=datetime.datetime.strptime(TimeD,"%H:%M")-datetime.datetime.strptime(TimeO,"%H:%M")
-        self.prtTime="<b>"+TimeO+"</b>"+" → "+"<b>"+TimeD+"</b>"
 
         if self.TrainTypeName.find("(")!=-1:
             self.TrainTypeName=self.TrainTypeName[0:self.TrainTypeName.find("(")]
     def format(self):
 
-        return (self.TrainDate+'  \n車次：'+self.TrainNum+"  車種："+self.TrainTypeName+"\n"+self.prtTime+" ， "+str(self.TourTime.seconds//60)+"mins")
+        return (self.Attrib.TrainDate+'  \n車次：'+self.Attrib.TrainNum+"  車種："+self.TrainTypeName+"\n"+self.Attrib.prtTime+" ， "+str(self.Attrib.TourTime.seconds//60)+"mins")
 
 def toTelegram(id,message):
     s = message.split(' ')

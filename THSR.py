@@ -4,27 +4,25 @@ import datetime
 import time
 import thsr_usr
 import ticket
+import TrainAttribute
 
 lst=dict()
 
 class TrainInf:
     def __init__(self,TrainNum,TrainDate,TimeO,TimeD,oID,dID):
         global lst
-        self.TrainNum=TrainNum
-        self.TrainDate=TrainDate
-        self.TourTime=datetime.datetime.strptime(TimeD,"%H:%M")-datetime.datetime.strptime(TimeO,"%H:%M")
-        self.prtTime="<b>"+TimeO+"</b>"+" → "+"<b>"+TimeD+"</b>"
-        self.ticket=ticket.Ticket(ticket.getTicket(self.TrainDate,lst,self.TrainNum))
+        self.Attrib=TrainAttribute.Attribute(TrainNum,TrainDate,TimeO,TimeD)
+        self.ticket=ticket.Ticket(ticket.getTicket(self.Attrib.TrainDate,lst,self.Attrib.TrainNum))
         self.O=oID
         self.D=dID
 
     def format(self):
         self.ticket.ini()
         
-        return (self.TrainDate+'  車次：'+self.TrainNum+"\n"+self.prtTime+" ， "+str(self.TourTime.seconds//60)+"mins\n"+self.ticket.getStatus(self.O,self.D))
+        return (self.Attrib.TrainDate+'  車次：'+self.Attrib.TrainNum+"\n"+self.Attrib.prtTime+" ， "+str(self.Attrib.TourTime.seconds//60)+"mins\n"+self.ticket.getStatus(self.O,self.D))
 
     def format1(self):
-        return (self.TrainDate+'  車次：'+self.TrainNum+"\n"+self.prtTime+" ， "+str(self.TourTime.seconds//60)+"mins")
+        return (self.Attrib.TrainDate+'  車次：'+self.Attrib.TrainNum+"\n"+self.Attrib.prtTime+" ， "+str(self.Attrib.TourTime.seconds//60)+"mins")
 import datetime
 
 def toTelegram(id, message):
