@@ -25,64 +25,78 @@ class TrainInf:
 
     def format1(self):
         return (self.TrainDate+'  車次：'+self.TrainNum+"\n"+self.prtTime+" ， "+str(self.TourTime.seconds//60)+"mins")
-def toTelegram(id,message):
+import datetime
+
+def toTelegram(id, message):
     s = message.split(' ')
-    if s.__len__() ==2:
-        thsr_usr.setLatest(id,s[1]+" "+s[0])
-        thsr_usr.setRecord(id,s[0]+" "+s[1])
-        timeStr=OtoD(s[0],s[1])
-        if timeStr!="":
-            thsr_usr.setLasttime(id,timeStr[timeStr.rfind("-")-2:timeStr.rfind("-")]+timeStr[timeStr.rfind("-")+1:timeStr.rfind("-")+3]+" "+timeStr[timeStr.rfind("→ ")-10:timeStr.rfind("→ ")-5])
-            return timeStr
-        else:
-            return ("Not Found")
-
-    elif s.__len__()==4:
-        thsr_usr.setLatest(id,s[3]+" "+s[2])
-        thsr_usr.setRecord(id,s[2]+" "+s[3])
-
-        date=datetime.date(datetime.date.today().year,int(s[0][0:2]),int(s[0][2:4]))
-        time=datetime.time(int(s[1]),0,0,0)
-        time=datetime.datetime.combine(date,time)
-
-        timeStr=(OtoD(s[2],s[3],str(date),time))
-        if timeStr!="":
-            thsr_usr.setLasttime(id,timeStr[timeStr.rfind("-")-2:timeStr.rfind("-")]+timeStr[timeStr.rfind("-")+1:timeStr.rfind("-")+3]+" "+timeStr[timeStr.rfind("→ ")-10:timeStr.rfind("→ ")-5])
-            return timeStr
-        else:
-            return ("Not Found")
-
-    elif s.__len__()==3:
-        if s[0].__len__()==4:
-            thsr_usr.setLatest(id,s[2]+" "+s[1])
-            thsr_usr.setRecord(id,s[1]+" "+s[2])
-
-            date=datetime.date(datetime.date.today().year,int(s[0][0:2]),int(s[0][2:4]))
-            time=datetime.time(4,0,0,0)
-            time=datetime.datetime.combine(date,time)
-
-            timeStr=(OtoD(s[1],s[2],str(date),time))
-            if timeStr!="":
-                thsr_usr.setLasttime(id,timeStr[timeStr.rfind("-")-2:timeStr.rfind("-")]+timeStr[timeStr.rfind("-")+1:timeStr.rfind("-")+3]+" "+timeStr[timeStr.rfind("→ ")-10:timeStr.rfind("→ ")-5])
-                return timeStr
-            else:
-                return ("Not Found")   
-
-        elif s[0].__len__()<=2:
-            thsr_usr.setLatest(id,s[2]+" "+s[1])
-            thsr_usr.setRecord(id,s[1]+" "+s[2])
-            time=datetime.time(int(s[0]),0,0,0)
-            time=datetime.datetime.combine(datetime.date.today(),time)
-            
-            timeStr=(OtoD(s[1],s[2],timeFlag=time))
-            if timeStr!="":
-                thsr_usr.setLasttime(id,timeStr[timeStr.rfind("-")-2:timeStr.rfind("-")]+timeStr[timeStr.rfind("-")+1:timeStr.rfind("-")+3]+" "+timeStr[timeStr.rfind("→ ")-10:timeStr.rfind("→ ")-5])
-                return timeStr
-            else:
-                return ("Not Found")
-    
-    else :
+    if len(s) == 2:
+        return handle_two_parts(id, s)
+    elif len(s) == 4:
+        return handle_four_parts(id, s)
+    elif len(s) == 3:
+        return handle_three_parts(id, s)
+    else:
         return "Input Error"
+
+def handle_two_parts(id, s):
+    thsr_usr.setLatest(id, s[1] + " " + s[0])
+    thsr_usr.setRecord(id, s[0] + " " + s[1])
+    timeStr = OtoD(s[0], s[1])
+    if timeStr != "":
+        thsr_usr.setLasttime(id, format_time_str(timeStr))
+        return timeStr
+    else:
+        return "Not Found"
+
+def handle_four_parts(id, s):
+    thsr_usr.setLatest(id, s[3] + " " + s[2])
+    thsr_usr.setRecord(id, s[2] + " " + s[3])
+    date = datetime.date(datetime.date.today().year, int(s[0][0:2]), int(s[0][2:4]))
+    time = datetime.time(int(s[1]), 0, 0, 0)
+    time = datetime.datetime.combine(date, time)
+    timeStr = OtoD(s[2], s[3], str(date), time)
+    if timeStr != "":
+        thsr_usr.setLasttime(id, format_time_str(timeStr))
+        return timeStr
+    else:
+        return "Not Found"
+
+def handle_three_parts(id, s):
+    if len(s[0]) == 4:
+        return handle_three_parts_date(id, s)
+    elif len(s[0]) <= 2:
+        return handle_three_parts_time(id, s)
+    else:
+        return "Input Error"
+
+def handle_three_parts_date(id, s):
+    thsr_usr.setLatest(id, s[2] + " " + s[1])
+    thsr_usr.setRecord(id, s[1] + " " + s[2])
+    date = datetime.date(datetime.date.today().year, int(s[0][0:2]), int(s[0][2:4]))
+    time = datetime.time(4, 0, 0, 0)
+    time = datetime.datetime.combine(date, time)
+    timeStr = OtoD(s[1], s[2], str(date), time)
+    if timeStr != "":
+        thsr_usr.setLasttime(id, format_time_str(timeStr))
+        return timeStr
+    else:
+        return "Not Found"
+
+def handle_three_parts_time(id, s):
+    thsr_usr.setLatest(id, s[2] + " " + s[1])
+    thsr_usr.setRecord(id, s[1] + " " + s[2])
+    time = datetime.time(int(s[0]), 0, 0, 0)
+    time = datetime.datetime.combine(datetime.date.today(), time)
+    timeStr = OtoD(s[1], s[2], timeFlag=time)
+    if timeStr != "":
+        thsr_usr.setLasttime(id, format_time_str(timeStr))
+        return timeStr
+    else:
+        return "Not Found"
+
+def format_time_str(timeStr):
+    return timeStr[timeStr.rfind("-")-2:timeStr.rfind("-")] + timeStr[timeStr.rfind("-")+1:timeStr.rfind("-")+3] + " " + timeStr[timeStr.rfind("→ ")-10:timeStr.rfind("→ ")-5]
+
 def Train_later(id):
     s=(thsr_usr.getLasttime(id)+" "+thsr_usr.getRecord(id)).split(' ')
         
