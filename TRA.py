@@ -23,19 +23,19 @@ def toTelegram(id,message):
     s = message.split(' ')
 
     if s.__len__() ==2:
-        user_inf.setLatest(id,s[1]+" "+s[0])
-        user_inf.setRecord(id,s[0]+" "+s[1])
+        setLatest(id,s[1]+" "+s[0])
+        setRecord(id,s[0]+" "+s[1])
 
         timeStr=OtoD(s[0],s[1])
         if timeStr!="":
-            user_inf.setLasttime(id,timeStr[timeStr.rfind("-")-2:timeStr.rfind("-")]+timeStr[timeStr.rfind("-")+1:timeStr.rfind("-")+3]+" "+timeStr[timeStr.rfind("→ ")-10:timeStr.rfind("→ ")-5])
+            setLasttime(id,timeStr[timeStr.rfind("-")-2:timeStr.rfind("-")]+timeStr[timeStr.rfind("-")+1:timeStr.rfind("-")+3]+" "+timeStr[timeStr.rfind("→ ")-10:timeStr.rfind("→ ")-5])
             return timeStr
         else:
             return ("Not Found")
 
     elif s.__len__()==4:
-        user_inf.setLatest(id,s[0]+" "+s[3]+" "+s[2])
-        user_inf.setRecord(id,s[2]+" "+s[3])
+        setLatest(id,s[0]+" "+s[3]+" "+s[2])
+        setRecord(id,s[2]+" "+s[3])
         
         date=datetime.date(datetime.date.today().year,int(s[0][0:2]),int(s[0][2:4]))
         time=datetime.time(int(s[1]),0,0,0)
@@ -43,14 +43,14 @@ def toTelegram(id,message):
 
         timeStr=(OtoD(s[2],s[3],str(date),time))
         if timeStr!="":
-            user_inf.setLasttime(id,timeStr[timeStr.rfind("-")-2:timeStr.rfind("-")]+timeStr[timeStr.rfind("-")+1:timeStr.rfind("-")+3]+" "+timeStr[timeStr.rfind("→ ")-10:timeStr.rfind("→ ")-5])
+            setLasttime(id,timeStr[timeStr.rfind("-")-2:timeStr.rfind("-")]+timeStr[timeStr.rfind("-")+1:timeStr.rfind("-")+3]+" "+timeStr[timeStr.rfind("→ ")-10:timeStr.rfind("→ ")-5])
             return timeStr
         else:
             return ("Not Found")
 
     elif s.__len__()==3:
-        user_inf.setLatest(id,s[0]+" "+s[2]+" "+s[1])
-        user_inf.setRecord(id,s[1]+" "+s[2])
+        setLatest(id,s[0]+" "+s[2]+" "+s[1])
+        setRecord(id,s[1]+" "+s[2])
 
         if s[0].__len__()==4:
             date=datetime.date(datetime.date.today().year,int(s[0][0:2]),int(s[0][2:4]))
@@ -59,7 +59,7 @@ def toTelegram(id,message):
 
             timeStr=(OtoD(s[1],s[2],str(date),time))
             if timeStr!="":
-                user_inf.setLasttime(id,timeStr[timeStr.rfind("-")-2:timeStr.rfind("-")]+timeStr[timeStr.rfind("-")+1:timeStr.rfind("-")+3]+" "+timeStr[timeStr.rfind("→ ")-10:timeStr.rfind("→ ")-5])
+                setLasttime(id,timeStr[timeStr.rfind("-")-2:timeStr.rfind("-")]+timeStr[timeStr.rfind("-")+1:timeStr.rfind("-")+3]+" "+timeStr[timeStr.rfind("→ ")-10:timeStr.rfind("→ ")-5])
                 return timeStr
             else:
                 return ("Not Found")   
@@ -70,7 +70,7 @@ def toTelegram(id,message):
             
             timeStr=(OtoD(s[1],s[2],timeFlag=time))
             if timeStr!="":
-                user_inf.setLasttime(id,timeStr[timeStr.rfind("-")-2:timeStr.rfind("-")]+timeStr[timeStr.rfind("-")+1:timeStr.rfind("-")+3]+" "+timeStr[timeStr.rfind("→ ")-10:timeStr.rfind("→ ")-5])
+                setLasttime(id,timeStr[timeStr.rfind("-")-2:timeStr.rfind("-")]+timeStr[timeStr.rfind("-")+1:timeStr.rfind("-")+3]+" "+timeStr[timeStr.rfind("→ ")-10:timeStr.rfind("→ ")-5])
                 return timeStr
             else:
                 return ("Not Found")
@@ -134,7 +134,13 @@ def OtoD(station1,station2,date=str(datetime.date.today()),timeFlag=datetime.dat
         s=s+inf.format()+'\n\n'
 
     return s[0:s.__len__()-2]
-
+    
+def setLatest(id,latest):
+    usr_dic[str(id)]["latest"]=latest
+def setLasttime(id,L):
+    usr_dic[str(id)]["lasttime"]=L
+def setRecord(id,R):
+    usr_dic[str(id)]["record"]=R
 
     
 if __name__ == '__main__':
